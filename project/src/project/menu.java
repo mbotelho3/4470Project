@@ -19,13 +19,14 @@ import javax.swing.JRadioButtonMenuItem;
 
 public class menu extends JMenuBar {
 	
+	private JFrame parentFrame;
 	private PhotoView defaultPanel;
 	private ButtonGroup bgroup;
 	private JMenu fileop;
 //	private ButtonGroup bgroup2;
 //	private ButtonGroup bgroup3;
 //	private JMenu drawop;
-	private File myFilesDude;
+	private File[] myFilesDude;
 	private JMenuItem importp;
 //	private JMenuItem lineCol;
 //	private JMenuItem lineW;
@@ -42,6 +43,7 @@ public class menu extends JMenuBar {
 	private BufferedImage buffImg;
 
 	public menu(final JFrame frame, final Statbar statbar){
+		parentFrame = frame;
 		fileop= new JMenu("File");
 		importp = new JMenuItem("Import Photo");
 		delete = new JMenuItem("Delete Selected Photos");
@@ -93,23 +95,23 @@ public class menu extends JMenuBar {
 			public void actionPerformed(ActionEvent e){
 				statbar.setText("Import has been selected");
 				JFileChooser choose= new JFileChooser();
-				//choose.setMultiSelectionEnabled(true);
+				choose.setMultiSelectionEnabled(true);
 				int opt= choose.showOpenDialog(frame);
 				if (opt == JFileChooser.APPROVE_OPTION){
-					myFilesDude = choose.getSelectedFile();
+					myFilesDude = choose.getSelectedFiles();
 					
 				}
 					try {
-						a= ImageIO.read(myFilesDude);
-						Driver.pc.setImage(a);
+						for (File f:myFilesDude){
+							a= ImageIO.read(f);
+							Image img = new Image(a);
+							((Driver)parentFrame).setImage(img);
+						}
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					
-				} 
-//					Driver.d.setSize(Driver.pc.imW, Driver.pc.imH);
-//					Driver.pc.setPreferredSize(Driver.d);
-					
+				} 					
 			}
 		});
 		
@@ -146,7 +148,7 @@ public class menu extends JMenuBar {
 	
 	}
 	
-	public File getFile(){
+	public File[] getFile(){
 		return myFilesDude;
 	}
 

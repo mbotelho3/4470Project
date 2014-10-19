@@ -1,6 +1,7 @@
 package project;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 import javax.swing.*;
 
@@ -10,15 +11,19 @@ public class Driver extends JFrame{
 	private Tools tools;
 	private JPanel panel;
 	public static PComponent pc;
+	public static TComponent tc;
+	private ArrayList<Image> imageList;
 	public static Dimension d;
 	
 	//set everything to be added to driver
 	public Driver(){
 		stat= new Statbar();
+		imageList= new ArrayList();
+		tc= new TComponent(this);
 		pc= new PComponent(this);
 		tools= new Tools(stat);
 		menu= new menu(this, stat);
-		d= new Dimension();
+		//d= new Dimension();
 		//change layout dynamically
 		panel= new JPanel(new BorderLayout());
 		panel.setPreferredSize(new Dimension(800,700));
@@ -27,13 +32,23 @@ public class Driver extends JFrame{
 		panel.add(menu, BorderLayout.NORTH);
 		panel.add(stat, BorderLayout.SOUTH);
 		panel.add(tools, BorderLayout.WEST);
-		panel.add(pc, BorderLayout.CENTER);
+		panel.add(tc, BorderLayout.CENTER);
 		this.setVisible(true);
 		
 		
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.pack();
-		System.out.println(d);
+	}
+	
+	//if multiple images selected should go straight to browser view?
+	public void setImage(Image img) {
+		imageList.add(img);
+		//pc.setImage(img.getImage());
+		tc.makeView();
+	}
+	
+	public ArrayList getImage() {
+		return imageList;
 	}
 	
 	public static void main (String[] args){

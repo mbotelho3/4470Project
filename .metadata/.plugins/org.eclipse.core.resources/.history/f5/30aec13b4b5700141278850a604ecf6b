@@ -1,0 +1,17 @@
+package project;
+
+import java.awt.image.BufferedImage;
+
+public class Image {
+
+	private BufferedImage im;
+	
+	
+	public Image(BufferedImage im){
+		this.im=im;
+	}
+
+	public BufferedImage getImage() {
+		return im;
+	}
+}

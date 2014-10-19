@@ -1,0 +1,29 @@
+package project;
+
+import java.awt.Component;
+import java.awt.GridLayout;
+import java.util.ArrayList;
+
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+
+public class TComponent extends JComponent{
+
+	private JFrame parentFrame;
+	
+	
+	public TComponent(final JFrame frame){
+		parentFrame=frame;
+		this.setBackground(Color.ORANGE);
+	}
+	
+	public void makeView(){
+		this.setLayout(new GridLayout(3,3));
+		ArrayList imList= ((Driver)parentFrame).getImage();
+		for (Object i:imList){
+			this.add((Component) i);
+		}
+	}
+	
+	
+}

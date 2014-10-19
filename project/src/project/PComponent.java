@@ -24,18 +24,15 @@ import javax.swing.JScrollPane;
 public class PComponent extends JPanel implements MouseListener,MouseMotionListener, KeyListener {
 	
 	
-	
-	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
-	private BufferedImage im;
+	private java.awt.Image im;
 	
 	private JScrollPane scroll;
 	
 	private boolean isFlipped;
+	
+	private Thumbnail thumb;
 	
 	//for text
 	private String str;
@@ -54,10 +51,11 @@ public class PComponent extends JPanel implements MouseListener,MouseMotionListe
 
 	public static int imW, imH;
 	
-	
+
 	public PComponent(final JFrame frame) {
 		imW = 100;
 		imH = 100;
+		thumb= new Thumbnail(this);
 		scroll = new JScrollPane();
 	    scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 	    scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -73,6 +71,8 @@ public class PComponent extends JPanel implements MouseListener,MouseMotionListe
         addKeyListener(this);
 
 	}
+	
+	
 	//make sure that text are wraps
 	public void drawWrapString(Graphics g, String s, int textBoxX, int textBoxY, int imW, int imH){
 		FontMetrics fm= g.getFontMetrics();
@@ -108,10 +108,8 @@ public class PComponent extends JPanel implements MouseListener,MouseMotionListe
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		if(im != null && !isFlipped) {
-			System.out.println("Yes");
 			setPreferredSize(new Dimension(imW,imH));
 			g.drawImage(im,0,0,null);
-//			scroll.setViewportView(this);
 		}
 		else if(im != null && isFlipped) {
 			g.setColor(Color.WHITE);
@@ -140,7 +138,12 @@ public class PComponent extends JPanel implements MouseListener,MouseMotionListe
             g2.drawLine(p1.x,p1.y,p2.x,p2.y);
         }
 		}
+		
 	}	
+	
+	
+	
+	
 		//counts mouse clicks to evaluate function
 		@Override
 		public void mouseClicked(MouseEvent ev) {
@@ -206,11 +209,11 @@ public class PComponent extends JPanel implements MouseListener,MouseMotionListe
 	    public void mouseMoved(MouseEvent ev) {
 		}
 		//sets img
-		public void setImage(BufferedImage im) {
+		public void setImage(java.awt.Image im) {
 			this.im = im;
 			System.out.println("paint");
-			imW = im.getWidth();
-			imH = im.getHeight();
+//			imW = im.getWidth();
+//			imH = im.getHeight();
 			pts.clear();
 			notes.clear();
 			notesX.clear();
