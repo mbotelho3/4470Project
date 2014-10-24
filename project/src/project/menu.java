@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
@@ -19,6 +20,7 @@ import javax.swing.JRadioButtonMenuItem;
 
 public class menu extends JMenuBar {
 	
+	public TComponent tc;
 	private JFrame parentFrame;
 	private PhotoView defaultPanel;
 	private ButtonGroup bgroup;
@@ -41,18 +43,22 @@ public class menu extends JMenuBar {
 	private JRadioButtonMenuItem browser;
 	private JRadioButtonMenuItem split;
 	private BufferedImage buffImg;
+	private ArrayList listy;
+	public int view;
 
 	public menu(final JFrame frame, final Statbar statbar){
+		view=1;
 		parentFrame = frame;
 		fileop= new JMenu("File");
 		importp = new JMenuItem("Import Photo");
 		delete = new JMenuItem("Delete Selected Photos");
 		exit =new JMenuItem("Exit Program");
 		
+		listy= new ArrayList();
 		
-		fileop.add(exit);
-		fileop.add(delete);
 		fileop.add(importp);
+		fileop.add(delete);
+		fileop.add(exit);
 		
 		add(fileop);
 	
@@ -105,8 +111,9 @@ public class menu extends JMenuBar {
 						for (File f:myFilesDude){
 							a= ImageIO.read(f);
 							Image img = new Image(a);
-							((Driver)parentFrame).setImage(img);
+							listy.add(img);
 						}
+						((Driver)parentFrame).setImage(listy, view);
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -124,6 +131,9 @@ public class menu extends JMenuBar {
 		delete.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		        statbar.setText("Delete was selected");
+		        Image i= ((Driver)parentFrame).getTC();
+		        System.out.println("m");
+		        ((Driver)parentFrame).removeIt(i, view);   
 		    }
 		});
 		
@@ -131,18 +141,27 @@ public class menu extends JMenuBar {
 		    public void actionPerformed(ActionEvent e) {
 		    	statbar.setText("Photo Viewer was selected");
 		    	defaultPanel.setVisible(true);
+		    	view=1;
+		    	((Driver)parentFrame).setImage(listy, view);
+//		    	listy.removeAll(listy);
 		      }
 		});
 		
 		browser.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		    	statbar.setText("Browser was selected");
+		    	view=2;
+		    	((Driver)parentFrame).setImage(listy, view);
+//		    	listy.removeAll(listy);
 		      }
 		});
 		
 		split.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		    	statbar.setText("Split Mode was selected");
+		    	view=3;
+		    	((Driver)parentFrame).setImage(listy, view);
+//		    	listy.removeAll(listy);
 		      }
 		});
 	

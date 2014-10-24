@@ -7,8 +7,11 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -16,12 +19,18 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.SpringLayout;
 
 
-public class PComponent extends JPanel implements MouseListener,MouseMotionListener, KeyListener {
+public class PComponent extends JComponent implements MouseListener,MouseMotionListener, KeyListener {
 	
 	
 	private static final long serialVersionUID = 1L;
@@ -45,33 +54,124 @@ public class PComponent extends JPanel implements MouseListener,MouseMotionListe
 	private List<Integer> notesY = new ArrayList<Integer>();
     private KeyboardControls keyboardControl;
 
+    private JPanel frame;
 	
+    private JPopupMenu pop;
+    private JMenu lineColor;
+    private JMenu lineWeight;
+    
+    private JMenuItem weight1;
+    private JMenuItem weight2;
+    private JMenuItem weight3;
+    
+    private Color lineColored;
+    private int lineWeighted;
+    
+    private JMenuItem black2;
+    private JMenuItem red2;
+    private JMenuItem blue2;
+    
+    private ActionListener myList;
+    
 	//for drawing
 	private ArrayList<Point> pts = new ArrayList<Point>();
 
-	public static int imW, imH;
-	
+	public PComponent(final JPanel frame) {
+		
+		this.frame=frame;
+		
+		lineColored= Color.BLACK;
+		lineWeighted=3;
+		
+		pop= new JPopupMenu();
+		lineColor= new JMenu("Line Color");
+		lineWeight= new JMenu("Line Weight");
+		
+		black2= new JMenuItem("Black");
+		red2= new JMenuItem("Red");
+		blue2= new JMenuItem("Blue");
+		
+		weight1= new JMenuItem("1");
+		weight2= new JMenuItem("2");
+		weight3= new JMenuItem("3");
 
-	public PComponent(final JFrame frame) {
-		imW = 100;
-		imH = 100;
+		lineColor.add(black2);
+		lineColor.add(blue2);
+		lineColor.add(red2);
+		
+		lineWeight.add(weight1);
+		lineWeight.add(weight2);
+		lineWeight.add(weight3);
+		
+		pop.add(lineColor);
+		pop.add(lineWeight);
+		
+		weight1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				lineWeighted= 3;
+			}
+		});
+		black2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				lineColored= (Color.BLACK);
+			}
+		});
+		weight2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				lineWeighted= 4;
+			}
+		});
+		red2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				lineColored= (Color.RED);
+			}
+		});
+		weight3.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				lineWeighted= 5;
+			}
+		});
+		blue2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				lineColored= (Color.BLUE);
+			}
+		});
+//		
+//		MouseListener popListener = new PopupListener(pop);
+////		output.addMouseListener(popListener);
+		
+		
 		thumb= new Thumbnail(this);
-		scroll = new JScrollPane();
+		
+		scroll = new JScrollPane(this);
 	    scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 	    scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 	    scroll.setViewportView(this);
 	    scroll.getViewport().setBackground(Color.LIGHT_GRAY);
+	    
+	    
 	    isFlipped = false;
 		texty = false;
+		
 		this.setBackground(Color.ORANGE);
-	    frame.getContentPane().add(BorderLayout.CENTER,scroll);
+		
+//		this.setLayout(new BorderLayout());
+		
+//	    frame.getRootPane().add(this,BorderLayout.CENTER);
+//	    this.setMinimumSize(new Dimension(1000,1000));
+	    
 	    addMouseListener(this);
 	    addMouseMotionListener(this);
         setFocusable(true);
         addKeyListener(this);
 
 	}
-	
 	
 	//make sure that text are wraps
 	public void drawWrapString(Graphics g, String s, int textBoxX, int textBoxY, int imW, int imH){
@@ -104,27 +204,32 @@ public class PComponent extends JPanel implements MouseListener,MouseMotionListe
 		}
 	}
 	
+	
+	
+	
 	// makes sure all img are updated
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		
+		
 		if(im != null && !isFlipped) {
-			setPreferredSize(new Dimension(imW,imH));
+			setPreferredSize(new Dimension(im.getWidth(this),im.getHeight(this)));
 			g.drawImage(im,0,0,null);
 		}
 		else if(im != null && isFlipped) {
 			g.setColor(Color.WHITE);
-            g.fillRect(0,0,imH,imW);
+            g.fillRect(0,0,im.getWidth(this),im.getHeight(this));
             
        if (!notes.isEmpty()){
     	   for (int i = 0; i < notes.size(); i++) {
-    		   drawWrapString(g,notes.get(i),notesX.get(i),notesY.get(i),imW,imH);
+    		   drawWrapString(g,notes.get(i),notesX.get(i),notesY.get(i),im.getWidth(this),im.getHeight(this));
        		}
        }
             
         if(texty && str!=null) {
-        	g.setColor(Color.BLUE);
+        	g.setColor(Color.BLACK);
         	String s = "" + letter;
-            drawWrapString(g, s, textBoxX, textBoxY, imW, imH);
+            drawWrapString(g, s, textBoxX, textBoxY, im.getWidth(this),im.getHeight(this));
         }
         
         for (int i = 0; i < pts.size() - 2; i++) {
@@ -132,96 +237,101 @@ public class PComponent extends JPanel implements MouseListener,MouseMotionListe
             Point p2 = pts.get(i+1);
 
             Graphics2D g2 = (Graphics2D) g;
-            g2.setStroke(new BasicStroke(3));
-            //************NEEEDDS TO BE CHANGES FOR MULT COLORS
-            g2.setColor(Color.BLACK);
+            g2.setStroke(new BasicStroke(lineWeighted));
+            g2.setColor(lineColored);
             g2.drawLine(p1.x,p1.y,p2.x,p2.y);
         }
 		}
 		
 	}	
 	
-	
-	
-	
 		//counts mouse clicks to evaluate function
-		@Override
-		public void mouseClicked(MouseEvent ev) {
-			//if not flipped
-			if(im != null && !isFlipped && ev.getClickCount() == 2 && ev.getX() <= imW 
-					&& ev.getY() <= imH) {
-				System.out.println("IN!");
-				isFlipped = true;
-				texty = false;
-				repaint();
-			}
-			
-			//already flipped
-			else if(im != null && isFlipped && ev.getClickCount() == 2 && ev.getX() <= imW 
-					&& ev.getY() <= imH) {
-				
-				isFlipped = false;
-				texty = false;
-				repaint();
-			}
-			
-			//flipped and want to add text
-			else if(im != null && isFlipped && ev.getClickCount() == 1 && ev.getX() <= imW
-					&& ev.getY() <= imH) {
-				if (str!=null){
-					notes.add(str);
-					notesX.add(textBoxX);
-					notesY.add(textBoxY);
-					str = null;
-				}
-				texty = true;
-//                keyboardControl.setTexty(texty);
-				textBoxX = ev.getX();
-				textBoxY = ev.getY();
-				System.out.println(texty);
-                requestFocus();
-				repaint();
-			}
-	    }
-		
-		
-
-		public void mouseEntered(MouseEvent ev) {
-		}
-	 
-	    public void mouseExited(MouseEvent ev) {
-	    }
-
-	    public void mousePressed(MouseEvent ev) {
-	    }
-	    
-	    public void mouseDragged(MouseEvent ev) {
-	    	if(im != null && isFlipped && ev.getX() <= imW
-	    			&& ev.getY() <= imH) {
-	    		pts.add(ev.getPoint());
-	    	    repaint();
-	    	}
-	    }
-	    
-	    public void mouseReleased(MouseEvent ev) {
-	    }
-	    
-	    public void mouseMoved(MouseEvent ev) {
-		}
-		//sets img
-		public void setImage(java.awt.Image im) {
-			this.im = im;
-			System.out.println("paint");
-//			imW = im.getWidth();
-//			imH = im.getHeight();
-			pts.clear();
-			notes.clear();
-			notesX.clear();
-			notesY.clear();
-//			Driver.d.setSize(imW, imH);
-//			Driver.p.setPreferredSize(Driver.d);
+	@Override
+	public void mouseClicked(MouseEvent ev) {
+		//if not flipped
+		if(im != null && !isFlipped && ev.getClickCount() == 2 && ev.getX() <= im.getWidth(this)
+				&& ev.getY() <= im.getHeight(this)) {
+			System.out.println("IN!");
+			isFlipped = true;
+			texty = false;
 			repaint();
 		}
+		
+		//already flipped
+		else if(im != null && isFlipped && ev.getClickCount() == 2 && ev.getX() <= im.getWidth(this)
+				&& ev.getY() <= im.getHeight(this)) {
+			
+			isFlipped = false;
+			texty = false;
+			repaint();
+		}
+		
+		//flipped and want to add text
+		else if(im != null && isFlipped && ev.getClickCount() == 1 && ev.getX() <= im.getWidth(this)
+				&& ev.getY() <= im.getHeight(this)) {
+			if (str!=null){
+				notes.add(str);
+				notesX.add(textBoxX);
+				notesY.add(textBoxY);
+				str = null;
+			}
+			texty = true;
+//                keyboardControl.setTexty(texty);
+			textBoxX = ev.getX();
+			textBoxY = ev.getY();
+			System.out.println(texty);
+            requestFocus();
+			repaint();
+		}
+		
+		if (ev.getButton()==3){
+			System.out.println("hello");
+			pop.show(ev.getComponent(), ev.getX(), ev.getY());
+		}
+		
+		System.out.println(ev.getButton());
+		
+    }
+	
+	
+
+	public void mouseEntered(MouseEvent ev) {
+		}
+ 
+    public void mouseExited(MouseEvent ev) {
+    }
+
+    public void mousePressed(MouseEvent ev) {
+    }
+    
+    public void mouseDragged(MouseEvent ev) {
+    	if(im != null && isFlipped && ev.getX() <= im.getWidth(this)
+    			&& ev.getY() <= im.getHeight(this)) {
+    		pts.add(ev.getPoint());
+    	    repaint();
+    	}
+    }
+    
+    public void mouseReleased(MouseEvent ev) {
+    	
+    }
+	    
+    public void mouseMoved(MouseEvent ev) {
+	}
+	//sets img
+	public void setImage(java.awt.Image im) {
+		this.im = im;
+		System.out.println("paint");
+//			imW = im.getWidth();
+//			imH = im.getHeight();
+		pts.clear();
+		notes.clear();
+		notesX.clear();
+		notesY.clear();
+//			Driver.d.setSize(imW, imH);
+//			Driver.p.setPreferredSize(Driver.d);
+		repaint();
+	}
 
     public void keyPressed(KeyEvent ev) {
         System.out.println("pshh");
@@ -235,13 +345,17 @@ public class PComponent extends JPanel implements MouseListener,MouseMotionListe
             char letter = ev.getKeyChar();
             if(str == null) {
                 str = "" + letter;
+                repaint();
             }
             else {
                 str = str+letter;
+                repaint();
             }
             repaint();
-        }
+        }      
     }
+
+    
     
     //sets text
 
@@ -262,7 +376,7 @@ public class PComponent extends JPanel implements MouseListener,MouseMotionListe
 			}
 
 			public void keyPressed(KeyEvent ev) {
-				System.out.println("pshh");
+//				System.out.println("pshh");
 			}
 
 			public void keyReleased(KeyEvent ev) {
@@ -273,14 +387,17 @@ public class PComponent extends JPanel implements MouseListener,MouseMotionListe
 					char letter = ev.getKeyChar();
 					if(str == null) {
 						str = "" + letter;
+						repaint();
 					}
 					else {
 						str = str+letter;
+						repaint();
 					}
 					repaint();
 				}
 			}
 		}
+
 
 		
 }
