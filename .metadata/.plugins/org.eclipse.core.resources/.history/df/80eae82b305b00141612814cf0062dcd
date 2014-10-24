@@ -77,13 +77,13 @@ public class LightTable extends JPanel{
 			tc.makeView(listy);
 //			c.gridx = 0;
 //			c.gridy = 0;
-			j.add(pc,BorderLayout.SOUTH);
+			j.add(tc,BorderLayout.SOUTH);
 //			c.gridx = 2;
 //			c.gridy = 0;
-			j.add(tc,BorderLayout.CENTER);
+			j.add(pc,BorderLayout.CENTER);
 //			parentFrame.getContentPane();
 			scroll.add(j);
-			this.add(j);
+			this.add(scroll);
 			validate();
 			repaint();
 		}

@@ -133,8 +133,7 @@ public class menu extends JMenuBar {
 		        statbar.setText("Delete was selected");
 		        Image i= ((Driver)parentFrame).getTC();
 		        System.out.println("m");
-		        listy.remove(listy.indexOf(i));  
-		        ((Driver)parentFrame).setImage(listy, view);
+		        ((Driver)parentFrame).removeIt(i, view);   
 		    }
 		});
 		

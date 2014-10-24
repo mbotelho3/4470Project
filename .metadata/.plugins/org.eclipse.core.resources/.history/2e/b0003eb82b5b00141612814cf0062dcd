@@ -51,7 +51,6 @@ public class TComponent extends JLabel implements MouseListener, KeyListener{
 	}
 	
 	public void makeView(ArrayList imList){
-		this.imList.addAll(imList);
 		int row = (int) Math.floor(imList.size()/3);
 		this.setLayout(new GridLayout(row,4,15,15));
 //		this.setLayout(new FlowLayout(1,15,15));
@@ -61,6 +60,7 @@ public class TComponent extends JLabel implements MouseListener, KeyListener{
 			JLabel j = new JLabel(icon);
 			buttList.add(j);
 			this.add(j);
+			this.imList.add((Image) imList.get(i));
 		}
 	}
 	

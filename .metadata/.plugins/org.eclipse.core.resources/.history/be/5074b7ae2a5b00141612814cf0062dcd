@@ -37,7 +37,6 @@ public class TComponent extends JLabel implements MouseListener, KeyListener{
 		selected= null;
 		parentFrame=frame;
 		buttList= new ArrayList();
-		imList= new ArrayList();
 		scroll = new JScrollPane(this);
 	    scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 	    scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -51,7 +50,7 @@ public class TComponent extends JLabel implements MouseListener, KeyListener{
 	}
 	
 	public void makeView(ArrayList imList){
-		this.imList.addAll(imList);
+		this.imList= imList.addAll(imList))
 		int row = (int) Math.floor(imList.size()/3);
 		this.setLayout(new GridLayout(row,4,15,15));
 //		this.setLayout(new FlowLayout(1,15,15));

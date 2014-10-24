@@ -41,14 +41,20 @@ public class Driver extends JFrame{
 	
 	//if multiple images selected should go straight to browser view?
 	public void setImage(ArrayList<Image> listy, int view) {
-		imageList.removeAll(imageList);
+		
 		for(Image i:listy){
 			imageList.add(i);
 		}
 		lt.setNewView(imageList, view);
+		imageList.removeAll(imageList);
 		revalidate();
 	}
 	
+	public void removeIt(Image i, int view){
+		imageList.remove(i);
+		lt.setNewView(imageList, view);
+		revalidate();
+	}
 	
 	public Image getTC(){
 		System.out.println("d");

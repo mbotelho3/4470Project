@@ -49,6 +49,12 @@ public class Driver extends JFrame{
 		revalidate();
 	}
 	
+	public void removeIt(Image i, int view){
+		System.out.println(imageList);
+		imageList.remove(i);
+		lt.setNewView(imageList, view);
+		revalidate();
+	}
 	
 	public Image getTC(){
 		System.out.println("d");

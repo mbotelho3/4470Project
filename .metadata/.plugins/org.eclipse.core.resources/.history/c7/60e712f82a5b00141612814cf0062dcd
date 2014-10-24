@@ -37,7 +37,6 @@ public class TComponent extends JLabel implements MouseListener, KeyListener{
 		selected= null;
 		parentFrame=frame;
 		buttList= new ArrayList();
-		imList= new ArrayList();
 		scroll = new JScrollPane(this);
 	    scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 	    scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);

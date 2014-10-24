@@ -30,6 +30,9 @@ public class LightTable extends JPanel{
 	
 	public LightTable(final JFrame frame){
 		tc= new TComponent(this);
+		scroll= new JScrollPane(
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
+                JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		parentFrame=frame;
 		viewType=1;
 		this.setBackground(Color.RED);
@@ -62,10 +65,7 @@ public class LightTable extends JPanel{
 			tc.makeView(listy);
 		}
 		if (v==3){
-			JPanel j=new JPanel();
-			scroll= new JScrollPane(
-	                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
-	                JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+			JScrollPane j=new JScrollPane();
 			removeAll();
 			j.setLayout(new BorderLayout());
 //			parentFrame.getContentPane();
@@ -77,12 +77,11 @@ public class LightTable extends JPanel{
 			tc.makeView(listy);
 //			c.gridx = 0;
 //			c.gridy = 0;
-			j.add(pc,BorderLayout.SOUTH);
+			j.add(tc,BorderLayout.SOUTH);
 //			c.gridx = 2;
 //			c.gridy = 0;
-			j.add(tc,BorderLayout.CENTER);
+			j.add(pc,BorderLayout.CENTER);
 //			parentFrame.getContentPane();
-			scroll.add(j);
 			this.add(j);
 			validate();
 			repaint();

@@ -131,10 +131,9 @@ public class menu extends JMenuBar {
 		delete.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		        statbar.setText("Delete was selected");
-		        Image i= ((Driver)parentFrame).getTC();
-		        System.out.println("m");
-		        listy.remove(listy.indexOf(i));  
-		        ((Driver)parentFrame).setImage(listy, view);
+//		        Image i= ((Driver)parentFrame).getTC();
+//		        System.out.println("m");
+//		        ((Driver)parentFrame).removeIt(i, view);   
 		    }
 		});
 		
