@@ -1,0 +1,49 @@
+package project;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+public class TComponent extends JPanel{
+
+	private JFrame parentFrame;
+	private JScrollPane scroll;
+	
+	public TComponent(final JFrame frame){
+		parentFrame=frame;
+		scroll = new JScrollPane();
+	    scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+	    scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+	    scroll.setViewportView(this);
+	    scroll.getViewport().setBackground(Color.LIGHT_GRAY);
+		parentFrame.getContentPane().add(BorderLayout.CENTER,scroll);
+		this.setBackground(Color.ORANGE);
+		
+	}
+	
+	public void makeView(){
+		ArrayList imList= ((Driver)parentFrame).getImage();
+		double row = Math.floor(imList.size()/3);
+		this.setLayout(new FlowLayout(1,15,15));
+//		this.setLayout(new GridLayout((int)row,3,1,1));
+		for (int i=0; i<imList.size();i++){
+			java.awt.Image t = ((Image)imList.get(i)).getThumbnail(new Dimension(100,100));
+			ImageIcon icon= new ImageIcon(t);
+			JLabel j = new JLabel(icon);
+			this.add(j);
+		}
+	}
+	
+	
+}

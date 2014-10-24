@@ -1,0 +1,128 @@
+package project;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.LineBorder;
+
+public class TComponent extends JPanel implements MouseListener{
+
+	private JFrame parentFrame;
+	private JScrollPane scroll;
+	private ArrayList<JButton> buttList;
+	private int selected;
+	private static int i;
+	
+	public TComponent(final JFrame frame){
+		selected= 0;
+		parentFrame=frame;
+		buttList= new ArrayList();
+		scroll = new JScrollPane();
+	    scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+	    scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+	    scroll.setViewportView(this);
+	    scroll.getViewport().setBackground(Color.LIGHT_GRAY);
+	    addMouseListener(this);
+		parentFrame.getContentPane().add(BorderLayout.CENTER,scroll);
+		this.setBackground(Color.ORANGE);
+		
+	}
+	
+	public void makeView(){
+		ArrayList imList= ((Driver)parentFrame).getImage();
+		double row = Math.floor(imList.size()/3);
+		this.setLayout(new FlowLayout(1,15,15));
+		for (int i=0; i<imList.size();i++){
+			java.awt.Image t = ((Image)imList.get(i)).getThumbnail(new Dimension(100,100));
+			ImageIcon icon= new ImageIcon(t);
+			JButton j = new JButton(icon);
+			j.setBorderPainted(false); 
+	        j.setContentAreaFilled(false);
+	        j.setFocusPainted(false); 
+	        j.setOpaque(false);
+			buttList.add(j);
+			this.add(j);
+		}
+		this.setMinimumSize(((Image) imList.get(0)).getDimension());
+	}
+	
+	
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		System.out.println(buttList.get(1).getBounds());
+		System.out.println(e.getXOnScreen()+ "," + e.getYOnScreen());
+    }
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+	/*public void addListeners(){
+
+		for (int j=i; i<buttList.size(); i++){
+			System.out.println(buttList);
+			buttList.get(i).addActionListener(new ActionListener() {
+			    public void actionPerformed(ActionEvent e) {
+			    	if (selected != i){
+			    		buttList.get(selected).setSelected(false);
+			    		selected(buttList.get(selected));
+			    		System.out.println(i);
+//			    		buttList.get(i).setSelected(true);
+//			    		selected(buttList.get(i));
+			    	}
+			    }
+			});
+		}
+	}
+	
+	public void selected(JButton b){
+		if (b.isSelected()){
+			b.setBorderPainted(true);
+	        b.setBorder(new LineBorder(Color.BLACK, 12));
+	        System.out.println("in");
+		}
+		if (!b.isSelected()){
+			b.setBorderPainted(false);
+			System.out.println("out");
+		}
+	}
+*/
+	
+}

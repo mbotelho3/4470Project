@@ -1,0 +1,38 @@
+package project;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.ScrollPane;
+
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+
+public class LightTable extends JComponent{
+
+	private Image currPic;
+	private JScrollPane scroll;
+	private int PhotoView;
+	private int BrowserView;
+	private int SplitView;
+	public int viewType;
+	
+	
+	public LightTable(final JFrame frame){
+		viewType=1;
+		scroll = new JScrollPane();
+	    scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+	    scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+	    scroll.setViewportView(this);
+	    scroll.getViewport().setBackground(Color.LIGHT_GRAY);
+		frame.getContentPane().add(BorderLayout.CENTER,scroll);
+		this.setBackground(Color.RED);
+		PhotoView=1;
+		BrowserView=2;
+		SplitView=3;
+	}
+	
+	public void setNewView(int v){
+		
+	}
+}

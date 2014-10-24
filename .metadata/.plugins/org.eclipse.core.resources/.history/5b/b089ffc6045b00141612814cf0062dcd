@@ -1,0 +1,56 @@
+package project;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.ScrollPane;
+import java.util.ArrayList;
+
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+
+public class LightTable extends JPanel{
+
+	private Image currPic;
+	private JScrollPane scroll;
+	private int PhotoView;
+	private int BrowserView;
+	private int SplitView;
+	public int viewType;
+	public PComponent pc;
+	public JFrame parentFrame;
+	public ArrayList<Image> imageList;
+	
+	
+	public LightTable(final JFrame frame){
+		parentFrame=frame;
+		viewType=1;
+		scroll = new JScrollPane();
+	    scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+	    scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+	    scroll.setViewportView(this);
+	    scroll.getViewport().setBackground(Color.LIGHT_GRAY);
+		frame.getContentPane().add(BorderLayout.CENTER,scroll);
+		this.setBackground(Color.RED);
+		PhotoView=1;
+		BrowserView=2;
+		SplitView=3;
+	}
+	
+	public void setImage(ArrayList<Image> listy) {
+		
+		for(Image i:listy){
+			imageList.add(i);
+		}
+//		pc.setImage(listy.get(0).getImage());
+//		tc.makeView();
+		revalidate();
+	}
+	
+	public void setNewView(int v){
+		if (v==1){
+			pc=new PComponent(parentFrame);
+		}
+		
+	}
+}

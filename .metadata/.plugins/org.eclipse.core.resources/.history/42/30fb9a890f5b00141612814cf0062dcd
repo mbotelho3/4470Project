@@ -1,0 +1,51 @@
+package project;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.ScrollPane;
+import java.util.ArrayList;
+
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+public class LightTable extends JPanel{
+
+	private Image currPic;
+	private JScrollPane scroll;
+	private int PhotoView;
+	public TComponent tc;
+	private int BrowserView;
+	private int SplitView;
+	public int viewType;
+	public PComponent pc;
+	public JFrame parentFrame;
+	public ArrayList<Image> imageList;
+	
+	
+	public LightTable(final JFrame frame){
+		parentFrame=frame;
+		viewType=1;
+		this.setBackground(Color.RED);
+		PhotoView=1;
+		BrowserView=2;
+		SplitView=3;
+	}
+	
+	public void setNewView(ArrayList listy, int v){
+		if (v==1){
+			pc=new PComponent(this);
+			this.add(pc);
+			pc.setImage(((Image) listy.get(0)).getImage());
+		}
+		if (v==2){
+			tc= new TComponent(this);
+			this.setLayout(new FlowLayout(1,15,15));
+			this.setPreferredSize(new Dimension(900,900));
+			this.add(tc);
+			tc.makeView(listy);
+		}
+	}
+}
