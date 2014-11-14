@@ -1,5 +1,6 @@
 package project;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -44,9 +45,11 @@ public class menu extends JMenuBar {
 	private JRadioButtonMenuItem split;
 	private BufferedImage buffImg;
 	private ArrayList listy;
+	public Statbar statbar;
 	public int view;
 
-	public menu(final JFrame frame, final Statbar statbar){
+	public menu(final JFrame frame, final Statbar sbar){
+		statbar=sbar;
 		view=1;
 		parentFrame = frame;
 		fileop= new JMenu("File");
@@ -110,7 +113,7 @@ public class menu extends JMenuBar {
 					try {
 						for (File f:myFilesDude){
 							a= ImageIO.read(f);
-							Image img = new Image(a);
+							BufferedImage img = a;
 							listy.add(img);
 						}
 						((Driver)parentFrame).setImage(listy, view);
@@ -168,8 +171,13 @@ public class menu extends JMenuBar {
 	
 	}
 	
+	public Statbar getStatBar(){
+		return statbar;
+	}
+	
 	public File[] getFile(){
 		return myFilesDude;
 	}
+
 
 }

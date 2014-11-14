@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,6 +39,8 @@ public class PComponent extends JComponent implements MouseListener,MouseMotionL
 	private java.awt.Image im;
 	
 	private JScrollPane scroll;
+	
+	public Image i;
 	
 	private boolean isFlipped;
 	
@@ -74,11 +77,15 @@ public class PComponent extends JComponent implements MouseListener,MouseMotionL
     private ActionListener myList;
     
 	//for drawing
-	private ArrayList<Point> pts = new ArrayList<Point>();
+	private ArrayList<Point> pts;
+	private ArrayList<Point> pts2;
 
 	public PComponent(final JPanel frame) {
 		
 		this.frame=frame;
+		
+		pts= new ArrayList<Point>();
+		pts2= new ArrayList<Point>();
 		
 		lineColored= Color.BLACK;
 		lineWeighted=3;
@@ -210,13 +217,24 @@ public class PComponent extends JComponent implements MouseListener,MouseMotionL
 	// makes sure all img are updated
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		
-		
+		System.out.println(isFlipped);
 		if(im != null && !isFlipped) {
 			setPreferredSize(new Dimension(im.getWidth(this),im.getHeight(this)));
 			g.drawImage(im,0,0,null);
+			System.out.println("BOO");
+			if(pts2.size()>=2){
+				for (int i = 0; i < pts.size() - 2; i++) {
+		        	Point p3 = pts2.get(i);
+		            Point p4 = pts2.get(i+1);
+		            Graphics2D g2 = (Graphics2D) g;
+		            g2.setStroke(new BasicStroke(lineWeighted));
+		            g2.setColor(Color.red);
+		            g2.drawLine(p3.x,p3.y,p4.x,p4.y);
+		            System.out.println("HI");
+				}
+			}
 		}
-		else if(im != null && isFlipped) {
+		else if(im != null) {
 			g.setColor(Color.WHITE);
             g.fillRect(0,0,im.getWidth(this),im.getHeight(this));
             
@@ -251,16 +269,15 @@ public class PComponent extends JComponent implements MouseListener,MouseMotionL
 		//if not flipped
 		if(im != null && !isFlipped && ev.getClickCount() == 2 && ev.getX() <= im.getWidth(this)
 				&& ev.getY() <= im.getHeight(this)) {
-			System.out.println("IN!");
+			
 			isFlipped = true;
 			texty = false;
 			repaint();
 		}
 		
 		//already flipped
-		else if(im != null && isFlipped && ev.getClickCount() == 2 && ev.getX() <= im.getWidth(this)
+		else if(im != null && ev.getClickCount() == 2 && ev.getX() <= im.getWidth(this)
 				&& ev.getY() <= im.getHeight(this)) {
-			
 			isFlipped = false;
 			texty = false;
 			repaint();
@@ -276,21 +293,16 @@ public class PComponent extends JComponent implements MouseListener,MouseMotionL
 				str = null;
 			}
 			texty = true;
-//                keyboardControl.setTexty(texty);
+//          keyboardControl.setTexty(texty);
 			textBoxX = ev.getX();
 			textBoxY = ev.getY();
 			System.out.println(texty);
             requestFocus();
 			repaint();
 		}
-		
 		if (ev.getButton()==3){
-			System.out.println("hello");
 			pop.show(ev.getComponent(), ev.getX(), ev.getY());
-		}
-		
-		System.out.println(ev.getButton());
-		
+		}		
     }
 	
 	
@@ -310,6 +322,11 @@ public class PComponent extends JComponent implements MouseListener,MouseMotionL
     		pts.add(ev.getPoint());
     	    repaint();
     	}
+    	if(im != null && !isFlipped && ev.getX() <= im.getWidth(this)
+    			&& ev.getY() <= im.getHeight(this)) {
+    		pts2.add(ev.getPoint());
+    	    repaint();
+    	}
     }
     
     public void mouseReleased(MouseEvent ev) {
@@ -319,19 +336,21 @@ public class PComponent extends JComponent implements MouseListener,MouseMotionL
     public void mouseMoved(MouseEvent ev) {
 	}
 	//sets img
-	public void setImage(java.awt.Image im) {
+	public void setImage(BufferedImage im) {
 		this.im = im;
 		System.out.println("paint");
 //			imW = im.getWidth();
 //			imH = im.getHeight();
 		pts.clear();
+		pts2.clear();
 		notes.clear();
 		notesX.clear();
 		notesY.clear();
 //			Driver.d.setSize(imW, imH);
 //			Driver.p.setPreferredSize(Driver.d);
 		repaint();
-	}
+	}	
+	
 
     public void keyPressed(KeyEvent ev) {
         System.out.println("pshh");
@@ -355,6 +374,7 @@ public class PComponent extends JComponent implements MouseListener,MouseMotionL
         }      
     }
 
+    
     
     
     //sets text

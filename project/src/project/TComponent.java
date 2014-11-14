@@ -6,12 +6,14 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
@@ -30,14 +32,18 @@ public class TComponent extends JLabel implements MouseListener, KeyListener{
 	private JScrollPane scroll;
 	private ArrayList<JLabel> buttList;
 	public ArrayList<Image> imList;
+	public ArrayList<java.awt.Image> imList2;
 	private JLabel selected;
+	public int selectedIndex;
 	private static int i;
+	private Dimension dim;
 	
 	public TComponent(final JPanel frame){
 		selected= null;
 		parentFrame=frame;
 		buttList= new ArrayList();
 		imList= new ArrayList();
+		selectedIndex=0;
 		scroll = new JScrollPane(this);
 	    scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 	    scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -49,28 +55,34 @@ public class TComponent extends JLabel implements MouseListener, KeyListener{
 		this.setBackground(Color.BLUE);
 		
 	}
-	
-	public void makeView(ArrayList imList){
+	// adds all images and makes the grid
+	public void makeView(ArrayList<BufferedImage> imList){
 		this.imList.addAll(imList);
 		int row = (int) Math.floor(imList.size()/3);
 		this.setLayout(new GridLayout(row,4,15,15));
 //		this.setLayout(new FlowLayout(1,15,15));
 		for (int i=0; i<imList.size();i++){
-			java.awt.Image t = ((Image)imList.get(i)).getThumbnail(new Dimension(100,100));
+			dim= new Dimension (imList.get(i).getWidth(), imList.get(i).getHeight());
+			java.awt.Image t = getThumbnail(new Dimension(100,100), imList.get(i));
 			ImageIcon icon= new ImageIcon(t);
 			JLabel j = new JLabel(icon);
 			buttList.add(j);
 			this.add(j);
 		}
 	}
+//makes thumbnails of pics
+	public java.awt.Image getThumbnail(Dimension dim, BufferedImage im){
+		this.dim=dim;
+		return im.getScaledInstance(dim.width, dim.height, BufferedImage.SCALE_SMOOTH);
+	}
 	
 	
-	
+	//mark a button as selected
 	public void buttonSelected(JLabel selected){
         selected.setBorder(new LineBorder(Color.BLACK, 2));
         System.out.println("in");
 	}
-	
+	//deselct previous button
 	public void buttonDeselect(JLabel b){
 		//NEED TO FIND HOW BORDER TO NO COLOR
 		b.setBorder(null);
@@ -103,7 +115,7 @@ public class TComponent extends JLabel implements MouseListener, KeyListener{
 		
 	}
 
-	@Override
+	//check what was selected and deselect
 	public void mouseClicked(MouseEvent e) {
 		for (JLabel b:buttList){
 			int x1=b.getX();
@@ -117,6 +129,7 @@ public class TComponent extends JLabel implements MouseListener, KeyListener{
 				selected= b;
 			}
 			
+			selectedIndex= buttList.indexOf(b);
 		}
 		
 		System.out.println(e.getXOnScreen()+ "," + e.getYOnScreen());
@@ -144,11 +157,19 @@ public class TComponent extends JLabel implements MouseListener, KeyListener{
 		
 	}
 
+	public int getSIndex(){
+		return selectedIndex;
+	}
+	
 	public Image getSelected() {
 		System.out.println(imList.size());
 		System.out.println(imList.get(buttList.indexOf(selected)));
 		return imList.get(buttList.indexOf(selected));
 	}
+	
+//	public java.awt.Image getSelected2() {
+//		return ((java.awt.Image)imList.get(buttList.indexOf(selected)));
+//	}
 	
 	
 	/*public void addListeners(){
@@ -173,3 +194,36 @@ public class TComponent extends JLabel implements MouseListener, KeyListener{
 */
 	
 }
+
+
+
+//public class thumby {
+//
+//	private BufferedImage im;
+//	private Dimension dim;
+//	
+//	public thumby(BufferedImage im){
+//		this.im=im;
+//		dim= new Dimension (im.getWidth(), im.getHeight());
+//	}
+//
+//	public BufferedImage getImage() {
+//		return im;
+//	}
+//	
+//	
+//	public java.awt.Image getThumbnail(Dimension dim){
+//		this.dim=dim;
+//		return im.getScaledInstance(dim.width, dim.height, BufferedImage.SCALE_SMOOTH);
+//	}
+//	
+//	public Dimension getDimension(){
+//		return dim;
+//	}
+//	
+//	public BufferedImage giveMeBI(Image i){
+//		
+//		im= i;
+//		return im;
+//	}
+//}

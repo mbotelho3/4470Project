@@ -6,18 +6,20 @@
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="FontMetrics" key="selection"/>
+		<item value="Image" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
-			<item value="fontMetrics"/>
-			<item value="imW"/>
-			<item value="im"/>
-			<item value="PC"/>
-			<item value="psh"/>
-			<item value="set"/>
+			<item value="Image"/>
+			<item value="buffered"/>
+			<item value="setImage"/>
+			<item value="java."/>
+			<item value="setMin"/>
+			<item value="validate"/>
+			<item value="getImage"/>
+			<item value="listy"/>
 		</list>
 		<list key="replacehistory">
 			<item value=""/>

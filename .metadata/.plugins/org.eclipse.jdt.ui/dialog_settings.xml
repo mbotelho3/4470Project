@@ -3,13 +3,15 @@
 	<section name="FatJarPackageWizard">
 		<item value="C:\Users\Luisa\OneDrive\Documents\4470\4470Project" key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION"/>
 		<item value="Driver - project" key="FatJarPackageWizardPage.LAUNCH_CONFIGURATION_SELECTION_NAME"/>
-		<item value="C:\Users\Luisa\Desktop\Luisa Botelho.jar" key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION"/>
+		<item value="C:\Users\Luisa\Desktop\LuisaBotelho.jar" key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION"/>
 		<item value="false" key="FatJarPackageWizardPage.ANTSCRIPT_SAVE"/>
-		<item value="2" key="FatJarPackageWizardPage.LIBRARY_HANDLING"/>
+		<item value="1" key="FatJarPackageWizardPage.LIBRARY_HANDLING"/>
 		<list key="FatJarPackageWizardPage.DESTINATION_NAMES_ID">
+			<item value="C:\Users\Luisa\Desktop\LuisaBotelho.jar"/>
 			<item value="C:\Users\Luisa\Desktop\Luisa Botelho.jar"/>
 		</list>
 		<list key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION_HISTORY">
+			<item value="C:\Users\Luisa\OneDrive\Documents\4470\4470Project.xml"/>
 			<item value=".xml"/>
 		</list>
 	</section>

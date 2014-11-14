@@ -1,0 +1,461 @@
+package project;
+
+import java.awt.Color;
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.regex.Pattern;
+import javax.swing.BorderFactory;
+import javax.swing.JMenuItem;
+import javax.swing.JToggleButton;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+
+/**
+ * My Recognizer class.
+ * 
+ * @author Ross Lucier
+ * 10/30/2014
+ */
+public class Recognizer {
+	
+	private LightTable lightTable;
+	private menu menu;
+	private ArrayList<Point> gestureCommand = new ArrayList<Point>();
+	private StringBuffer directionVector = new StringBuffer();
+	private final int N = (1<<0);
+	private final int B = (1<<1);
+	private final int E = (1<<2);
+	private final int C = (1<<3);
+	private final int S = (1<<4);
+	private final int D = (1<<5);
+	private final int W = (1<<6);
+	private final int A = (1<<7);
+	private final int NORTHS = (A|N|B); //General north directions
+	private final int SOUTHS = (D|S|C); //General south directions
+	private final int EASTS = (B|E|C); //General east directions
+	private final int WESTS = (A|W|D); //General west directions
+	private int[] moveForwardTemplate = {EASTS,SOUTHS,WESTS};
+	private Pattern forward;
+	private int[] moveForwardTemplate2 = {EASTS,NORTHS,WESTS};
+	private Pattern forward2;
+	private int[] moveBackwardTemplate = {WESTS,SOUTHS,EASTS};
+	private Pattern backward;
+	private int[] moveBackwardTemplate2 = {WESTS,NORTHS,EASTS};
+	private Pattern backward2;
+	private int[] deleteTemplate = {WESTS,SOUTHS,EASTS,NORTHS,WESTS,SOUTHS};
+	private Pattern delete;
+	private int[] deleteTemplate2 = {WESTS,NORTHS,EASTS,SOUTHS,WESTS,NORTHS};
+	private Pattern delete2;
+	private int[] vacationTemplate = {SOUTHS,EASTS};
+	private Pattern vacation;
+	private int[] familyTemplate = {NORTHS,EASTS,SOUTHS,EASTS,SOUTHS};
+	private Pattern family;
+	private int[] schoolTemplate = {EASTS,SOUTHS,WESTS,NORTHS};
+	private Pattern school;
+	private int[] workTemplate = {SOUTHS,EASTS,NORTHS,EASTS,SOUTHS,EASTS,NORTHS};
+	private Pattern work1;
+
+	/**
+	 * Constructor for the recognizer class. It builds the
+	 * patterns for each gesture by calling a private regexp
+	 * method.
+	 * 
+	 * @param lightTable
+	 */
+	public Recognizer(LightTable lightTable) {
+		this.lightTable = lightTable;
+		this.menu = lightTable.getMenu();
+		
+		StringBuffer regexpForward = buildPatternString(moveForwardTemplate);
+		forward = Pattern.compile(regexpForward.toString());
+		StringBuffer regexpForward2 = buildPatternString(moveForwardTemplate2);
+		forward2 = Pattern.compile(regexpForward2.toString());
+		StringBuffer regexpBackward = buildPatternString(moveBackwardTemplate);
+		backward = Pattern.compile(regexpBackward.toString());
+		StringBuffer regexpBackward2 = buildPatternString(moveBackwardTemplate2);
+		backward2 = Pattern.compile(regexpBackward2.toString());
+		StringBuffer regexpDelete = buildPatternString(deleteTemplate);
+		delete = Pattern.compile(regexpDelete.toString());
+		StringBuffer regexpDelete2 = buildPatternString(deleteTemplate2);
+		delete2 = Pattern.compile(regexpDelete2.toString());
+		StringBuffer regexpVacation = buildPatternString(vacationTemplate);
+		vacation = Pattern.compile(regexpVacation.toString());
+		StringBuffer regexpFamily = buildPatternString(familyTemplate);
+		family = Pattern.compile(regexpFamily.toString());
+		StringBuffer regexpSchool = buildPatternString(schoolTemplate);
+		school = Pattern.compile(regexpSchool.toString());
+		StringBuffer regexpWork = buildPatternString(workTemplate);
+		work1 = Pattern.compile(regexpWork.toString());
+	}
+	
+	/**
+	 * Method that creates a StringBuffer of the gesture
+	 * directions and then resets it after comparing it
+	 * to the templates.
+	 */
+	public void createDirectionVector() {
+		Point priorPoint = gestureCommand.get(0);
+		for(Point gesturePoint : gestureCommand) {
+			if(gesturePoint != priorPoint) {
+				if(gesturePoint.x == priorPoint.x && gesturePoint.y < priorPoint.y) {
+					directionVector.append("N");
+				}
+				else if(gesturePoint.x > priorPoint.x && gesturePoint.y < priorPoint.y) {
+					directionVector.append("B");
+				}
+				else if(gesturePoint.x > priorPoint.x && gesturePoint.y == priorPoint.y) {
+					directionVector.append("E");
+				}
+				else if(gesturePoint.x > priorPoint.x && gesturePoint.y > priorPoint.y) {
+					directionVector.append("C");
+				}
+				else if(gesturePoint.x == priorPoint.x && gesturePoint.y > priorPoint.y) {
+					directionVector.append("S");
+				}
+				else if(gesturePoint.x < priorPoint.x && gesturePoint.y > priorPoint.y) {
+					directionVector.append("D");
+				}
+				else if(gesturePoint.x < priorPoint.x && gesturePoint.y == priorPoint.y) {
+					directionVector.append("W");
+				}
+				else if(gesturePoint.x < priorPoint.x && gesturePoint.y < priorPoint.y) {
+					directionVector.append("A");
+				}
+				priorPoint = gesturePoint;
+			}
+		}
+		
+		compareGesture(directionVector);
+		directionVector.setLength(0);
+	}
+	
+	/**
+	 * Retrieves the points for the drawn gesture. 
+	 * 
+	 * @param gestureCommand
+	 */
+	public void setGestureCommand(ArrayList<Point> gestureCommand) {
+		this.gestureCommand = gestureCommand;
+	}
+	
+	/**
+	 * Returns the regexp StringBuffer for the patterns.
+	 * 
+	 * @param template
+	 * @return regexp
+	 */
+	private StringBuffer buildPatternString(int[] template) {
+		StringBuffer regexp = new StringBuffer();
+		regexp.append("^");
+		regexp.append(".{0,4}+");
+		
+		for(int i = 0; i < template.length; i++) {
+			switch(template[i]) {
+				case N:regexp.append("N+"); break;
+				case B:regexp.append("B+"); break;
+				case E:regexp.append("E+"); break;
+				case C:regexp.append("C+"); break;
+				case S:regexp.append("S+"); break;
+				case D:regexp.append("D+"); break;
+				case W:regexp.append("W+"); break;
+				case A:regexp.append("A+"); break;
+				case NORTHS:regexp.append("[ANB]+"); break;
+				case EASTS:regexp.append("[BEC]+"); break;
+				case SOUTHS:regexp.append("[DSC]+"); break;
+				case WESTS:regexp.append("[AWD]+"); break;
+			}
+		}
+		
+		regexp.append(".{0,4}+");
+		regexp.append("$");
+		return regexp;
+	}
+	
+	/**
+	 * Compares the gesture to the templates. Calls private methods
+	 * to carry out the actions for each gesture.
+	 * 
+	 * @param directionVector
+	 */
+	private void compareGesture(StringBuffer directionVector) {
+		String stringifiedDirection = directionVector.toString();
+		Statbar statusBar = menu.getStatBar();
+		
+		if(forward.matcher(stringifiedDirection).find() ||
+				forward2.matcher(stringifiedDirection).find()) { //Compares to forward templates
+			statusBar.setText("Next photo gesture");
+//			forwardAction();
+		}
+		else if(backward.matcher(stringifiedDirection).find() ||
+				backward2.matcher(stringifiedDirection).find()) { //Compares to backward templates
+			statusBar.setText("Previous photo gesture");
+//			backwardAction();
+		}
+		else if(delete.matcher(stringifiedDirection).find() ||
+				delete2.matcher(stringifiedDirection).find()) { //Compares to delete templates
+//			deleteAction();
+			statusBar.setText("Delete gesture");
+		}
+		else if(vacation.matcher(stringifiedDirection).find()) { //Compares to vacation template
+			statusBar.setText("Vacation gesture");
+//			vacationAction();
+		}
+		else if(family.matcher(stringifiedDirection).find()) { //Compares to family template
+			statusBar.setText("Family gesture");
+//			familyAction();
+		}
+		else if(school.matcher(stringifiedDirection).find()) { //Compares to school template
+			statusBar.setText("School gesture");
+//			schoolAction();
+		}
+		else if(work1.matcher(stringifiedDirection).find()) { //Compares to work template
+			statusBar.setText("Work gesture");
+//			workAction();
+		}
+		else {
+			statusBar.setText("Unrecognized gesture");
+		}
+	}
+	
+	/**
+	 * Method for the forward gesture command. It is identical
+	 * to the method seen in ToolBar for the forward arrow button.
+	 */
+//	private void forwardAction() {
+//		ArrayList<PhotoComponent> photos = lightTable.getPhotos();
+//		ArrayList<ThumbnailComponent> thumbnails = lightTable.getThumbnails();`
+//		ToolBar toolbar = menu.getToolBar();
+//		JToggleButton vacation = toolbar.getVacation();
+//    	JToggleButton family = toolbar.getFamily();
+//    	JToggleButton school = toolbar.getSchool();
+//    	JToggleButton work = toolbar.getWork();
+//		if(lightTable.getMode() == 1) {
+//			int i = lightTable.getIndex();
+//			i++;
+//			
+//			if(i < photos.size()) {
+//				lightTable.setIndex(i);
+//				lightTable.setSelectedThumbnailIndex(i);
+//				
+//				PhotoComponent currentPhoto = photos.get(i);
+//				vacation.setSelected(currentPhoto.getVacationTag());
+//	        	family.setSelected(currentPhoto.getFamilyTag());
+//	        	school.setSelected(currentPhoto.getSchoolTag());
+//	        	work.setSelected(currentPhoto.getWorkTag());
+//			}
+//		}
+//		else if(lightTable.getMode() == 3) {
+//			int index = lightTable.getSelectedThumbnailIndex();
+//			++index;
+//			
+//			if(index < photos.size()) {
+//				int i = 0;
+//				for(ThumbnailComponent thumbnail : thumbnails) {
+//					thumbnail.setBorder(null);
+//					thumbnail.setSelected(false);
+//					if(index == i) {
+//						Border coloredBorder = BorderFactory.createLineBorder(Color.BLACK,8);
+//						Border raised = BorderFactory.createRaisedBevelBorder();
+//						Border lowered = BorderFactory.createLoweredBevelBorder();
+//						Border compound = new CompoundBorder(coloredBorder,
+//								raised);
+//						Border finalCompound = new CompoundBorder(compound,lowered);
+//						thumbnail.setBorder(finalCompound);
+//						thumbnail.setSelected(true);
+//						lightTable.setIndex(index);
+//						lightTable.setSelectedThumbnailIndex(index);
+//					}
+//					++i;
+//				}
+//				
+//				PhotoComponent currentPhoto = photos.get(index);
+//				vacation.setSelected(currentPhoto.getVacationTag());
+//	        	family.setSelected(currentPhoto.getFamilyTag());
+//	        	school.setSelected(currentPhoto.getSchoolTag());
+//	        	work.setSelected(currentPhoto.getWorkTag());
+//			}
+//			lightTable.changePhotoPanelPhoto();
+//		}
+//	}
+//	
+//	/**
+//	 * Method for the backward command. It is identical
+//	 * to the method seen in ToolBar for the backward arrow button.
+//	 */
+//	private void backwardAction() {
+//		ArrayList<PhotoComponent> photos = lightTable.getPhotos();
+//		ArrayList<ThumbnailComponent> thumbnails = lightTable.getThumbnails();
+//		ToolBar toolbar = menu.getToolBar();
+//		JToggleButton vacation = toolbar.getVacation();
+//    	JToggleButton family = toolbar.getFamily();
+//    	JToggleButton school = toolbar.getSchool();
+//    	JToggleButton work = toolbar.getWork();
+//		if(lightTable.getMode() == 1) {
+//			int i = lightTable.getIndex();
+//			i--;
+//			if(i <= photos.size() && i >= 0) {
+//				lightTable.setIndex(i);
+//				lightTable.setSelectedThumbnailIndex(i);
+//				
+//				PhotoComponent currentPhoto = photos.get(i);
+//				vacation.setSelected(currentPhoto.getVacationTag());
+//	        	family.setSelected(currentPhoto.getFamilyTag());
+//	        	school.setSelected(currentPhoto.getSchoolTag());
+//	        	work.setSelected(currentPhoto.getWorkTag());
+//			}
+//		}
+//		else if(lightTable.getMode() == 3) {
+//			int index = lightTable.getSelectedThumbnailIndex();
+//			--index;
+//			
+//			if(index <= photos.size() && index >= 0) {
+//				int i = 0;
+//				for(ThumbnailComponent thumbnail : thumbnails) {
+//					thumbnail.setBorder(null);
+//					thumbnail.setSelected(false);
+//					if(index == i) {
+//						Border coloredBorder = BorderFactory.createLineBorder(Color.BLACK,8);
+//						Border raised = BorderFactory.createRaisedBevelBorder();
+//						Border lowered = BorderFactory.createLoweredBevelBorder();
+//						Border compound = new CompoundBorder(coloredBorder,
+//								raised);
+//						Border finalCompound = new CompoundBorder(compound,lowered);
+//						thumbnail.setBorder(finalCompound);
+//						thumbnail.setSelected(true);
+//						lightTable.setIndex(index);
+//						lightTable.setSelectedThumbnailIndex(index);
+//					}
+//					++i;
+//				}
+//				
+//				PhotoComponent currentPhoto = photos.get(index);
+//				vacation.setSelected(currentPhoto.getVacationTag());
+//	        	family.setSelected(currentPhoto.getFamilyTag());
+//	        	school.setSelected(currentPhoto.getSchoolTag());
+//	        	work.setSelected(currentPhoto.getWorkTag());
+//			}
+//			lightTable.changePhotoPanelPhoto();
+//		}
+//	}
+//	
+//	/**
+//	 * Method for the delete gesture command. It is identical
+//	 * to the method seen in MenuBar for the delete button.
+//	 */
+//	public void deleteAction() {
+//		if(!lightTable.getPhotos().isEmpty()) {
+//        	lightTable.deletePhoto();
+//        	JMenuItem delete = menu.getDeleteButton();
+//        	
+//        	if(lightTable.getPhotos().isEmpty()) {
+//        		ToolBar toolbar = menu.getToolBar();
+//        		JToggleButton vacation = toolbar.getVacation();
+//	        	JToggleButton family = toolbar.getFamily();
+//	        	JToggleButton school = toolbar.getSchool();
+//	        	JToggleButton work = toolbar.getWork();
+//				vacation.setSelected(false);
+//	        	family.setSelected(false);
+//	        	school.setSelected(false);
+//	        	work.setSelected(false);
+//	        	
+//	        	delete.setEnabled(false);
+//        	}
+//        	else {
+//        		ArrayList<PhotoComponent> photos = lightTable.getPhotos();
+//        		int i = lightTable.getIndex();
+//        		PhotoComponent currentPhoto = photos.get(i);
+//        		ToolBar toolbar = menu.getToolBar();
+//        		JToggleButton vacation = toolbar.getVacation();
+//	        	JToggleButton family = toolbar.getFamily();
+//	        	JToggleButton school = toolbar.getSchool();
+//	        	JToggleButton work = toolbar.getWork();
+//				vacation.setSelected(currentPhoto.getVacationTag());
+//	        	family.setSelected(currentPhoto.getFamilyTag());
+//	        	school.setSelected(currentPhoto.getSchoolTag());
+//	        	work.setSelected(currentPhoto.getWorkTag());
+//	        	
+//	        	delete.setEnabled(true);
+//        	}	
+//        }
+//	}
+//	
+//	/**
+//	 * Method for the vacation gesture command. It toggles the
+//	 * vacation button on the ToolBar.
+//	 */
+//	public void vacationAction() {
+//		ArrayList<PhotoComponent> photos = lightTable.getPhotos();
+//		int i = lightTable.getIndex();
+//		PhotoComponent currentPhoto = photos.get(i);
+//		ToolBar toolbar = menu.getToolBar();
+//		JToggleButton vacation = toolbar.getVacation();
+//		boolean vacationStatus = currentPhoto.getVacationTag();
+//		
+//		if(vacationStatus) {
+//			vacation.setSelected(false);
+//		}
+//		else {
+//			vacation.setSelected(true);
+//		}
+//	}
+//	
+//	/**
+//	 * Method for the family gesture command. It toggles the
+//	 * family button on the ToolBar.
+//	 */
+//	public void familyAction() {
+//		ArrayList<PhotoComponent> photos = lightTable.getPhotos();
+//		int i = lightTable.getIndex();
+//		PhotoComponent currentPhoto = photos.get(i);
+//		ToolBar toolbar = menu.getToolBar();
+//		JToggleButton family = toolbar.getFamily();
+//		boolean familyStatus = currentPhoto.getFamilyTag();
+//		
+//		if(familyStatus) {
+//			family.setSelected(false);
+//		}
+//		else {
+//			family.setSelected(true);
+//		}
+//	}
+//	
+//	/**
+//	 * Method for the school gesture command. It toggles the
+//	 * school button on the ToolBar.
+//	 */
+//	public void schoolAction() {
+//		ArrayList<PhotoComponent> photos = lightTable.getPhotos();
+//		int i = lightTable.getIndex();
+//		PhotoComponent currentPhoto = photos.get(i);
+//		ToolBar toolbar = menu.getToolBar();
+//		JToggleButton school = toolbar.getSchool();
+//		boolean schoolStatus = currentPhoto.getSchoolTag();
+//		
+//		if(schoolStatus) {
+//			school.setSelected(false);
+//		}
+//		else {
+//			school.setSelected(true);
+//		}
+//	}
+//	
+//	/**
+//	 * Method for the work gesture command. It toggles the
+//	 * work button on the ToolBar.
+//	 */
+//	public void workAction() {
+//		ArrayList<PhotoComponent> photos = lightTable.getPhotos();
+//		int i = lightTable.getIndex();
+//		PhotoComponent currentPhoto = photos.get(i);
+//		ToolBar toolbar = menu.getToolBar();
+//		JToggleButton work = toolbar.getWork();
+//		boolean workStatus = currentPhoto.getWorkTag();
+//		
+//		if(workStatus) {
+//			work1.setSelected(false);
+//		}
+//		else {
+//			work1.setSelected(true);
+//		}
+//	}
+}

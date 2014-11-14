@@ -1,6 +1,7 @@
 package project;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -40,7 +41,7 @@ public class Driver extends JFrame{
 	}
 	
 	//if multiple images selected should go straight to browser view?
-	public void setImage(ArrayList<Image> listy, int view) {
+	public void setImage(ArrayList<BufferedImage> listy, int view) {
 		imageList.removeAll(imageList);
 		for(Image i:listy){
 			imageList.add(i);
@@ -50,9 +51,13 @@ public class Driver extends JFrame{
 	}
 	
 	
-	public Image getTC(){
+	public java.awt.Image getTC(){
 		System.out.println("d");
 		return lt.getTC();
+	}
+	
+	public menu getMenu(){
+		return menu;
 	}
 	
 	public ArrayList getImage() {
